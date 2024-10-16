@@ -9,7 +9,6 @@ class Token(object):
         self.value = value
 
     def __str__(self):
-        """String representation of the class instance."""
         return 'Token({type}, {value})'.format(
             type=self.type,
             value=repr(self.value)
@@ -41,82 +40,71 @@ class Lexer(object):
 
     def get_token_type(self, token):
         """Determine the token type based on the token value."""
-        if re.match(r'CREATE', token, re.IGNORECASE):
-            return 'CREATE'
-        elif re.match(r'INSERT', token, re.IGNORECASE):
-            return 'INSERT'
-        elif re.match(r'PRINT_INDEX', token, re.IGNORECASE):
-            return 'PRINT_INDEX'
-        elif re.match(r'SEARCH', token, re.IGNORECASE):
-            return 'SEARCH'
-        elif re.match(r'WHERE', token, re.IGNORECASE):
-            return 'WHERE'
-        elif re.match(r'[a-zA-Z][a-zA-Z0-9_]*', token):
-            return 'COLLECTION'
-        elif re.match(r'^"[a-zA-Z][a-zA-Z0-9_]*"$', token):
-            return 'WORD'
-        elif re.match(r'^".*"$', token):
-            return 'DOCUMENT'
-        elif token == '-':
-            return 'MIN'
-        elif re.match(r'^<\d+>$', token):
-            return 'DIST'
-        elif token == ';':
-            return 'EOI'
-        else:
-            self.error()
+        token_patterns = {
+            r'CREATE': 'CREATE',
+            r'INSERT': 'INSERT',
+            r'PRINT_INDEX': 'PRINT_INDEX',
+            r'SEARCH': 'SEARCH',
+            r'WHERE': 'WHERE',
+            r'^[a-zA-Z][a-zA-Z0-9_]*$': 'COLLECTION',
+            r'^"[a-zA-Z][a-zA-Z0-9_]*"$': 'WORD',
+            r'^".*"$': 'DOCUMENT',
+            r'^-': 'MIN',
+            r'^<\d+>$': 'DIST',
+            r'^;$': 'EOI'
+        }
+
+        # Check for each pattern
+        for pattern, token_type in token_patterns.items():
+            if re.match(pattern, token, re.IGNORECASE if token_type in ['CREATE', 'INSERT', 'PRINT_INDEX', 'SEARCH', 'WHERE'] else 0):
+                return token_type
+
+        self.error()
+
+    def tokenize_text(self, text):
+        words = re.findall(r'[a-zA-Z0-9_]+', text)
+        return words
 
     def get_next_token(self):
         """Get the next token from the input, handling quoted strings and other token types."""
         while self.current_char is not None:
-
-            # Пропускаем пробелы
+            # Skip whitespace
             if self.current_char.isspace():
                 self.skip_whitespace()
                 continue
 
-            # Проверяем на конец команды
+            # End of command
             if self.current_char == ';':
                 self.advance()
                 return Token('EOI', ';')
 
-            # Проверяем на минус (например, для диапазонов)
+            # Handle the minus sign
             if self.current_char == '-':
                 self.advance()
                 return Token('MIN', '-')
 
+            # Initialize result for gathering token characters
             result = ''
 
-            # Проверяем на открытые кавычки для документов или строк
+            # Handle quoted strings (documents or words)
             if self.current_char == '"':
-                self.advance()  # Пропускаем начальную кавычку
-                contains_space = False
-                while self.current_char is not None and self.current_char != '"':
-                    if self.current_char.isspace():
-                        contains_space = True  # Отмечаем, что внутри есть пробел
-                    result += self.current_char
-                    self.advance()
-                self.advance()  # Пропускаем закрывающую кавычку
-                if contains_space:
-                    return Token('DOCUMENT', result)  # Если есть пробелы, возвращаем DOCUMENT
-                else:
-                    return Token('WORD', result)  # Если нет пробелов, возвращаем WORD
+                self.advance()
+                result, contains_space = self._get_quoted_string()
+                token_type = 'DOCUMENT' if contains_space else 'WORD'
+                result = self.tokenize_text(result)
+                return Token(token_type, result)
 
-            # Проверяем на угловые скобки для числовых значений (например, "<N>")
+            # Handle angle brackets for <N>
             if self.current_char == '<':
-                self.advance()  # Пропускаем начальную угловую скобку
-                while self.current_char is not None and self.current_char != '>':
-                    result += self.current_char
-                    self.advance()
-                self.advance()  # Пропускаем закрывающую угловую скобку
-                # Проверяем, что результат — это целое число
+                self.advance()
+                result = self._get_angle_bracket_content()
                 if result.isdigit():
-                    return Token('DIST', int(result))  # Возвращаем целое значение
+                    return Token('DIST', int(result))  # Return as an integer
                 else:
-                    self.error()  # Если внутри угловых скобок не число, генерируем ошибку
+                    self.error()  # Error if not a number
 
-            # Собираем обычные слова/идентификаторы
-            while self.current_char is not None and not self.current_char.isspace() and self.current_char != ';' and self.current_char != '"':
+            # Gather ordinary words/identifiers
+            while self.current_char is not None and not self.current_char.isspace() and self.current_char not in [';', '"']:
                 result += self.current_char
                 self.advance()
 
@@ -126,10 +114,32 @@ class Lexer(object):
 
         return Token('EOF', None)
 
+    def _get_quoted_string(self):
+        """Helper method to handle quoted strings and determine if they contain spaces."""
+        result = ''
+        contains_space = False
+        while self.current_char is not None and self.current_char != '"':
+            if self.current_char.isspace():
+                contains_space = True
+            result += self.current_char
+            self.advance()
+        self.advance()  # Move past the closing quote
+        return result, contains_space
 
+    def _get_angle_bracket_content(self):
+        """Helper method to gather content inside angle brackets."""
+        result = ''
+        while self.current_char is not None and self.current_char != '>':
+            result += self.current_char
+            self.advance()
+        self.advance()  # Move past the closing bracket
+        return result
+
+
+# поработать с не закрывающимся кавычками
 
 if __name__ == '__main__':
-    lexer = Lexer('CrEate jjefkfo; <ter>')
+    lexer = Lexer('CrEate "jjefkfo;  <ter>')
 
     token = lexer.get_next_token()
     while token.type != 'EOF':

@@ -18,31 +18,34 @@ class Parser(object):
 
     def parse_create(self):
         """Парсим команду CREATE."""
-        self.eat('CREATE')  # Ожидаем токен 'CREATE'
-        collection_name = self.current_token.value  # Получаем имя коллекции
-        self.eat('COLLECTION')  # Ожидаем имя коллекции
-        self.eat('EOI')  # Ожидаем конец команды (;)
+        self.eat('CREATE')  
+        collection_name = self.current_token.value 
+        self.eat('COLLECTION')  
+        self.eat('EOI') 
         print(f"Creating collection: {collection_name}")
+        # create collection
         return collection_name
 
     def parse_insert(self):
         """Парсим команду INSERT."""
-        self.eat('INSERT')  # Ожидаем токен 'INSERT'
-        collection_name = self.current_token.value # получаем имя коллекции
-        self.eat('COLLECTION')  # Ожидаем имя коллекции
-        document = self.current_token.value  # Получаем документ
-        self.eat('DOCUMENT', 'WORD')  # Ожидаем документ
-        self.eat('EOI')  # Ожидаем конец команды (;)
+        self.eat('INSERT')  
+        collection_name = self.current_token.value 
+        self.eat('COLLECTION')  
+        document = self.current_token.value 
+        self.eat('DOCUMENT', 'WORD')  
+        self.eat('EOI')  
         print(f"Inserting in {collection_name} document: {document}")
+        # insert document
         return collection_name, document
     
     def parse_print_index(self): 
         """Парсим команду print_index."""
-        self.eat('PRINT_INDEX')  # Ожидаем токен 'CREATE'
-        collection_name = self.current_token.value  # Получаем имя коллекции
-        self.eat('COLLECTION')  # Ожидаем имя коллекции
-        self.eat('EOI')  # Ожидаем конец команды (;)
+        self.eat('PRINT_INDEX')  
+        collection_name = self.current_token.value  
+        self.eat('COLLECTION')  
+        self.eat('EOI')  
         print(f"Printing index in collection: {collection_name}")
+        # print index for collection
         return collection_name
     
     def parse_search(self):
