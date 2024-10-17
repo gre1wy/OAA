@@ -4,7 +4,7 @@ class InvertedIndex:
         self.index = {}
         self.next_doc_id = 1  # Инициализация счетчика идентификаторов документов
 
-    def insert(self, doc_id, tokens):
+    def insert(self, tokens):
         # Генерация идентификатора документа
         doc_id = self.next_doc_id
         self.next_doc_id += 1  # Увеличение идентификатора для следующего документа
@@ -19,6 +19,13 @@ class InvertedIndex:
     def print_index(self):
         for word, doc_positions in self.index.items():
             print(f"'{word}': {doc_positions}")
+    
+    def search(self):
+        """Возвращает все документы, содержащиеся в индексе"""
+        all_docs = set()
+        for word_docs in self.index.values():
+            all_docs.update(word_docs.keys())
+        return list(all_docs)
 
     def search_word(self, word):
         # Поиск документов с конкретным словом
@@ -32,8 +39,8 @@ class InvertedIndex:
                 result_docs.update(self.index[word].keys())
         return list(result_docs)
 
-    def search_distance(self, keyword1, keyword2, max_distance):
-        # Поиск документов, где keyword1 и keyword2 находятся на расстоянии не более max_distance
+    def search_distance(self, keyword1, keyword2, exact_distance):
+    # Поиск документов, где keyword1 и keyword2 находятся на расстоянии точно равном exact_distance
         result_docs = []
         if keyword1 not in self.index or keyword2 not in self.index:
             return result_docs
@@ -42,7 +49,8 @@ class InvertedIndex:
             if doc_id in self.index[keyword2]:
                 pos_word1 = self.index[keyword1][doc_id]
                 pos_word2 = self.index[keyword2][doc_id]
-                if any(abs(p1 - p2) <= max_distance for p1 in pos_word1 for p2 in pos_word2):
+                # Проверяем, есть ли позиции, где расстояние между словами точно равно exact_distance
+                if any(abs(p1 - p2) == exact_distance for p1 in pos_word1 for p2 in pos_word2):
                     result_docs.append(doc_id)
 
         return result_docs
@@ -60,10 +68,10 @@ class DB:
             self.collections[name] = InvertedIndex()
             print(f"Коллекция '{name}' создана.")
 
-    def insert_document(self, collection_name, doc_id, text):
+    def insert_document(self, collection_name,text):
         if collection_name in self.collections:
-            self.collections[collection_name].insert(doc_id, text)
-            print(f"Документ {doc_id} добавлен в коллекцию '{collection_name}'.")
+            self.collections[collection_name].insert(text)
+            print(f"Документ добавлен в коллекцию '{collection_name}'.")
         else:
             print(f"Коллекция '{collection_name}' не найдена.")
 
@@ -72,11 +80,30 @@ class DB:
             self.collections[collection_name].print_index()
         else:
             print(f"Коллекция '{collection_name}' не найдена.")
-
-    def search(self, collection_name, word1, word2=None, distance=None):
+    
+    def search(self, collection_name):
         if collection_name in self.collections:
-            result = self.collections[collection_name].search_where(word1, word2, distance)
+            result = self.collections[collection_name].search()
+            print(f"Все документы в коллекции '{collection_name}': {result}")
+        else:
+            print(f"Коллекция '{collection_name}' не найдена.")
+
+    def search_word(self, collection_name, word):
+        if collection_name in self.collections:
+            result = self.collections[collection_name].search_word(word)
             print(f"Результаты поиска: {result}")
         else:
             print(f"Коллекция '{collection_name}' не найдена.")
 
+    def search_range(self, collection_name, word1, word2):
+        if collection_name in self.collections:
+            result = self.collections[collection_name].search_range(word1, word2)
+            print(f"Результаты поиска: {result}")
+        else:
+            print(f"Коллекция '{collection_name}' не найдена.")
+    def search_distance(self, collection_name, word1, word2, exact_dist):
+        if collection_name in self.collections:
+            result = self.collections[collection_name].search_distance(word1, word2, exact_dist)
+            print(f"Результаты поиска: {result}")
+        else:
+            print(f"Коллекция '{collection_name}' не найдена.")

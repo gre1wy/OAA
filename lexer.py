@@ -24,7 +24,7 @@ class Lexer(object):
         self.current_char = self.text[self.pos] if self.text else None
 
     def error(self):
-        raise Exception('Invalid character')
+        raise Exception('Invalid in lexer')
 
     def advance(self):
         """Advance the `pos` pointer and set the `current_char` variable."""
@@ -123,6 +123,11 @@ class Lexer(object):
                 contains_space = True
             result += self.current_char
             self.advance()
+
+        # Если мы достигли конца текста без закрывающей кавычки, вызываем ошибку
+        if self.current_char is None:
+            self.error()  # Незакрытая кавычка
+
         self.advance()  # Move past the closing quote
         return result, contains_space
 
@@ -132,14 +137,20 @@ class Lexer(object):
         while self.current_char is not None and self.current_char != '>':
             result += self.current_char
             self.advance()
+
+        # Если мы достигли конца текста без закрывающей угловой скобки, вызываем ошибку
+        if self.current_char is None:
+            self.error()  # Незакрытая угловая скобка
+
         self.advance()  # Move past the closing bracket
         return result
+
 
 
 # поработать с не закрывающимся кавычками
 
 if __name__ == '__main__':
-    lexer = Lexer('CrEate "jjefkfo;  <ter>')
+    lexer = Lexer('CrEate "jje"fkfo; <4>')
 
     token = lexer.get_next_token()
     while token.type != 'EOF':

@@ -1,0 +1,8 @@
+create a1;
+create a2;
+insert a1 "hello its biden";
+insert a1 "hello biden. its zelenskyi";
+insert a1 "no money";
+print_index a1;
+search a1;
+search a1 where "its";

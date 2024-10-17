@@ -1,5 +1,6 @@
 from lexer import Lexer
 from parser import Parser
+from invertedIndex import DB
 def main():
     print("Welcome to the text collection management system!")
     print("You can use the following commands:")
@@ -9,6 +10,8 @@ def main():
     print("  SEARCH <collection_name> WHERE \"<word>\" [<N> \"<word>\"];")
     print("Type '-q' to quit.")
     
+    db = DB()
+
     while True:
         try:
             # Принимаем команду от пользователя
@@ -22,17 +25,17 @@ def main():
             # Создаем экземпляр лексера
             lexer = Lexer(text)
             
-            # Создаем экземпляр парсера
-            parser = Parser(lexer)
+            # Создаем экземпляр парсера с передачей db
+            parser = Parser(lexer, db)
             
-            # Вызываем авто-парсер, который сам определит тип команды
+            # Вызываем авто-парсер, который делает всю магию
             parser.auto_parse()
-
-            # тут мы что то делаем с того что на парсерили
         
         except Exception as e:
             print(f"Error: {e}")
 
+
 if __name__ == '__main__':
     main()
+    
 
