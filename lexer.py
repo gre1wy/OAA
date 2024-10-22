@@ -1,45 +1,80 @@
-import re
-
-# разбиваем ввод на слова лексером
-# парсером обрабатываем слова
+import re # For processing regular expressions
 
 class Token(object):
+
+    """Class for representing tokens"""
+
     def __init__(self, type, value):
+
+        """Initialization of the token
+
+        Args:
+            type (str): Type of the token
+            value (str): Value of the token
+        """
+
         self.type = type
         self.value = value
 
     def __str__(self):
+
+        """Returns the string representation of the token"""
+
         return 'Token({type}, {value})'.format(
             type=self.type,
             value=repr(self.value)
         )
 
     def __repr__(self):
+
+        """Returns the representation of the token"""
+
         return self.__str__()
     
 class Lexer(object):
+
+    """Class for tokenizing text
+
+    Used to split the input text into tokens,
+    which can then be processed by the parser
+    """
+
     def __init__(self, text):
+
+        """Initialization of the lexer
+
+        Args:
+            text (str): Text for tokenization
+        """
+
         self.text = text
         self.pos = 0
         self.current_char = self.text[self.pos] if self.text else None
 
     def error(self):
-        raise Exception('Invalid in lexer')
+        raise Exception('Error in lexer')
 
     def advance(self):
-        """Advance the `pos` pointer and set the `current_char` variable."""
+
+        """Moves the `pos` pointer and sets the `current_char` variable"""
+
         self.pos += 1
         if self.pos >= len(self.text):
-            self.current_char = None  # Indicates end of input
+            self.current_char = None  # Indicates the end of the input
         else:
             self.current_char = self.text[self.pos]
 
     def skip_whitespace(self):
+
+        """Skips whitespace"""
+
         while self.current_char is not None and self.current_char.isspace():
             self.advance()
 
     def get_token_type(self, token):
-        """Determine the token type based on the token value."""
+
+        """Determines the token type based on its value using regular expressions"""
+        
         token_patterns = {
             r'CREATE': 'CREATE',
             r'INSERT': 'INSERT',
@@ -47,14 +82,14 @@ class Lexer(object):
             r'SEARCH': 'SEARCH',
             r'WHERE': 'WHERE',
             r'^[a-zA-Z][a-zA-Z0-9_]*$': 'COLLECTION',
-            r'^"[a-zA-Z][a-zA-Z0-9_]*"$': 'WORD',
+            r'^"[a-zA-Z][a-zA-Z0-9_]*"$': 'WORD', 
             r'^".*"$': 'DOCUMENT',
             r'^-': 'MIN',
             r'^<\d+>$': 'DIST',
             r'^;$': 'EOI'
         }
 
-        # Check for each pattern
+        # Check which pattern the token matches
         for pattern, token_type in token_patterns.items():
             if re.match(pattern, token, re.IGNORECASE if token_type in ['CREATE', 'INSERT', 'PRINT_INDEX', 'SEARCH', 'WHERE'] else 0):
                 return token_type
@@ -62,12 +97,18 @@ class Lexer(object):
         self.error()
 
     def tokenize_text(self, text):
+
+        """Splits the text into individual words using regular expressions"""
+        
         words = re.findall(r'[a-zA-Z0-9_]+', text)
         return words
 
     def get_next_token(self):
-        """Get the next token from the input, handling quoted strings and other token types."""
+
+        """Gets the next token from the input, processing quoted strings and other types of tokens"""
+        
         while self.current_char is not None:
+
             # Skip whitespace
             if self.current_char.isspace():
                 self.skip_whitespace()
@@ -78,15 +119,15 @@ class Lexer(object):
                 self.advance()
                 return Token('EOI', ';')
 
-            # Handle the minus sign
+            # Processing the minus sign
             if self.current_char == '-':
                 self.advance()
                 return Token('MIN', '-')
 
-            # Initialize result for gathering token characters
+            # Initialize result for collecting token characters
             result = ''
 
-            # Handle quoted strings (documents or words)
+            # Processing quoted strings (documents or words)
             if self.current_char == '"':
                 self.advance()
                 result, contains_space = self._get_quoted_string()
@@ -94,7 +135,7 @@ class Lexer(object):
                 result = self.tokenize_text(result)
                 return Token(token_type, result)
 
-            # Handle angle brackets for <N>
+            # Processing angle brackets for <N>
             if self.current_char == '<':
                 self.advance()
                 result = self._get_angle_bracket_content()
@@ -103,7 +144,7 @@ class Lexer(object):
                 else:
                     self.error()  # Error if not a number
 
-            # Gather ordinary words/identifiers
+            # Collecting regular words/identifiers
             while self.current_char is not None and not self.current_char.isspace() and self.current_char not in [';', '"']:
                 result += self.current_char
                 self.advance()
@@ -115,7 +156,9 @@ class Lexer(object):
         return Token('EOF', None)
 
     def _get_quoted_string(self):
-        """Helper method to handle quoted strings and determine if they contain spaces."""
+
+        """Helper method for processing quoted strings and determining if they contain spaces """
+        
         result = ''
         contains_space = False
         while self.current_char is not None and self.current_char != '"':
@@ -124,30 +167,30 @@ class Lexer(object):
             result += self.current_char
             self.advance()
 
-        # Если мы достигли конца текста без закрывающей кавычки, вызываем ошибку
+        # If reached the end of the text without a closing quote, raise an error
         if self.current_char is None:
-            self.error()  # Незакрытая кавычка
+            self.error()  # Unclosed quote
 
         self.advance()  # Move past the closing quote
         return result, contains_space
 
     def _get_angle_bracket_content(self):
-        """Helper method to gather content inside angle brackets."""
+
+        """Helper method for collecting content in angle brackets"""
+        
         result = ''
         while self.current_char is not None and self.current_char != '>':
             result += self.current_char
             self.advance()
 
-        # Если мы достигли конца текста без закрывающей угловой скобки, вызываем ошибку
+        # If reached the end of the text without a closing angle bracket, raise an error
         if self.current_char is None:
-            self.error()  # Незакрытая угловая скобка
+            self.error()  # Unclosed angle bracket
 
         self.advance()  # Move past the closing bracket
         return result
 
 
-
-# поработать с не закрывающимся кавычками
 
 if __name__ == '__main__':
     lexer = Lexer('CREATE \t \r one_piece;')
