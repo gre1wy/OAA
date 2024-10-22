@@ -6,15 +6,13 @@ class Parser(object):
     """Parser for processing commands from the lexer and executing actions in the database"""
 
     def __init__(self, lexer, db):
-
         """Initializes the parser with the lexer and database
 
         Args:
             lexer (Lexer): The lexer responsible for tokenizing the text
             db (DB): The database object for executing commands
         """
-    
-        self.lexer = Lexer
+        self.lexer = lexer # changed from Lexer to lexer !!! ??
         self.db = db
         self.current_token = self.lexer.get_next_token()
 
