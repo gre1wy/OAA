@@ -150,7 +150,7 @@ class Lexer(object):
 # поработать с не закрывающимся кавычками
 
 if __name__ == '__main__':
-    lexer = Lexer('CrEate "jje"fkfo; <4>')
+    lexer = Lexer('CREATE \t \r one_piece;')
 
     token = lexer.get_next_token()
     while token.type != 'EOF':

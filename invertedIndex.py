@@ -1,13 +1,11 @@
 class InvertedIndex:
     def __init__(self):
-        # Словарь: {слово: {document_id: [позиции]}}
         self.index = {}
-        self.next_doc_id = 1  # Инициализация счетчика идентификаторов документов
+        self.next_doc_id = 1  
 
     def insert(self, tokens):
-        # Генерация идентификатора документа
         doc_id = self.next_doc_id
-        self.next_doc_id += 1  # Увеличение идентификатора для следующего документа
+        self.next_doc_id += 1 
 
         for pos, token in enumerate(tokens):
             if token not in self.index:

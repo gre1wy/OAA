@@ -1,6 +1,7 @@
 from lexer import Lexer
 from parser import Parser
 from invertedIndex import DB
+import sys
 def main():
     print("Welcome to the text collection management system!")
     print("You can use the following commands:")
@@ -15,8 +16,8 @@ def main():
     while True:
         try:
             # Принимаем команду от пользователя
-            text = input('Enter command: ')
-            
+            # text = input('Enter command: ')
+            text = sys.stdin.read()
             # Выход, если пользователь ввел 'exit'
             if text.lower() == '-q':
                 print("Exiting the system.")

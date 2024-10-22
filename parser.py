@@ -87,11 +87,13 @@ class Parser(object):
         
         if command_type == 'CREATE':
             collection_name = self.parse_create()
-            self.db.create_collection(collection_name)  
+            # self.db.create_collection(collection_name) 
+            return  collection_name
             
         elif command_type == 'INSERT':
             collection_name, document = self.parse_insert()
-            self.db.insert_document(collection_name, document)  
+            # self.db.insert_document(collection_name, document)
+            return  collection_name, document
             
         elif command_type == 'PRINT_INDEX':
             collection_name = self.parse_print_index()
