@@ -3,15 +3,15 @@ from invertedIndex import DB
 
 class Parser(object):
 
-    """Парсер для обробки команд з лексера та виконання дій у базі даних"""
+    """Parser for processing commands from the lexer and executing actions in the database"""
 
-    def __init__(self, Lexer, db):
+    def __init__(self, lexer, db):
 
-        """Ініціалізує парсер з лексером та базою даних
+        """Initializes the parser with the lexer and database
 
         Args:
-            lexer (Lexer): лексер, що відповідає за токенізацію тексту
-            db (DB): об'єкт бази даних для виконання команд
+            lexer (Lexer): The lexer responsible for tokenizing the text
+            db (DB): The database object for executing commands
         """
     
         self.lexer = Lexer
@@ -20,18 +20,18 @@ class Parser(object):
 
     def error(self):
 
-        """Викликає помилку синтаксису"""
+        """Raises a syntax error"""
 
         raise Exception('Invalid syntax')
 
     def eat(self, token_type, token_type_second=None):
 
-        """Перевіряє чи тип поточного токена відповідає очікуваному типу. Якщо так, то переходимо 
-        на наступний токен. Якщо передані 2 типи, перевіряєму відповідність будь-якому з них (?)
+        """Checks if the current token type matches the expected type. If so, it moves 
+        to the next token. If two types are provided, it checks against either (?).
 
         Args:
-            token_type (str): Очікуваний тип токена
-            token_type_second (str): Додатковий тип токена для перевірки (необов'язково)
+            token_type (str): Expected token type
+            token_type_second (str): Additional token type for checking (optional)
         """
     
         if self.current_token.type == token_type or (token_type_second and self.current_token.type == token_type_second):
@@ -41,7 +41,7 @@ class Parser(object):
 
     def parse_create(self):
 
-        """Парсить команду CREATE"""
+        """Parses the CREATE command"""
 
         self.eat('CREATE')  
         collection_name = self.current_token.value 
@@ -52,7 +52,7 @@ class Parser(object):
 
     def parse_insert(self):
 
-        """Парсить команду INSERT"""
+        """Parses the INSERT command"""
 
         self.eat('INSERT')  
         collection_name = self.current_token.value 
@@ -65,7 +65,7 @@ class Parser(object):
     
     def parse_print_index(self): 
 
-        """Парсить команду print_index"""
+        """Parses the PRINT_INDEX command"""
 
         self.eat('PRINT_INDEX')  
         collection_name = self.current_token.value  
@@ -76,7 +76,7 @@ class Parser(object):
     
     def parse_search(self):
 
-        """Парсить команду SEARCH"""
+        """Parses the SEARCH command"""
 
         self.eat('SEARCH')  
         collection_name = self.current_token.value  
@@ -87,7 +87,7 @@ class Parser(object):
             word1 = self.current_token.value  
             self.eat('WORD')  
 
-            # Перевірка на використання мінуса (-) для пошуку у діапазоні
+            # Check for the use of minus (-) for range search
             if self.current_token.type == 'MIN':  # WHERE “keyword_1” - “keyword_1”
                 self.eat('MIN')
                 word2 = self.current_token.value
@@ -96,7 +96,7 @@ class Parser(object):
                 print(f"Searching in collection {collection_name} for documents with word between '{word1}' and '{word2}'")
                 return collection_name, word1[0], word2[0], None
             
-            # Перевірка на відстань між словами
+            # Check for distance between words
             if self.current_token.type == 'DIST': # “keyword_1” <N> “keyword_2” 
                 dist = self.current_token.value
                 self.eat('DIST')
@@ -118,11 +118,11 @@ class Parser(object):
     
     def auto_parse(self):
 
-        """Автоматично парсить команду на основі типу токена"""
+        """Automatically parses the command based on the token type"""
 
         command_type = self.current_token.type
 
-        # Обробка команд на основі типу токена
+        # Process commands based on token type
         if command_type == 'CREATE':
             collection_name = self.parse_create()
             self.db.create_collection(collection_name)  
@@ -149,7 +149,7 @@ class Parser(object):
             elif collection_name and not word1 and not word2 and not dist:
                 self.db.search(collection_name)  
         else:
-            self.error() # Генерує помилку для невідомої команди
+            self.error() # Raises an error for unknown command
 
 
 

@@ -1,17 +1,16 @@
-import re # Для обробки регулярних виразів
-
+import re # For processing regular expressions
 
 class Token(object):
 
-    """Клас для представлення токенів"""
+    """Class for representing tokens"""
 
     def __init__(self, type, value):
 
-        """Ініціалізація токена
+        """Initialization of the token
 
         Args:
-            type (str): Тип токена
-            value (str): Значення токена
+            type (str): Type of the token
+            value (str): Value of the token
         """
 
         self.type = type
@@ -19,7 +18,7 @@ class Token(object):
 
     def __str__(self):
 
-        """Повертає рядкове представлення токена"""
+        """Returns the string representation of the token"""
 
         return 'Token({type}, {value})'.format(
             type=self.type,
@@ -28,24 +27,24 @@ class Token(object):
 
     def __repr__(self):
 
-        """Повертає представлення токена"""
+        """Returns the representation of the token"""
 
         return self.__str__()
     
 class Lexer(object):
 
-    """Клас для токенізації тексту
+    """Class for tokenizing text
 
-    Використовується для розбиття введеного тексту на токени,
-    які потім можуть бути оброблені парсером
+    Used to split the input text into tokens,
+    which can then be processed by the parser
     """
 
     def __init__(self, text):
 
-        """Ініціалізація лексера
+        """Initialization of the lexer
 
         Args:
-            text (str): Текст для токенізації
+            text (str): Text for tokenization
         """
 
         self.text = text
@@ -53,28 +52,28 @@ class Lexer(object):
         self.current_char = self.text[self.pos] if self.text else None
 
     def error(self):
-        raise Exception('Помилка в лексері')
+        raise Exception('Error in lexer')
 
     def advance(self):
 
-        """Переміщуємо покажчик `pos` та встановлюємо змінну `current_char`"""
+        """Moves the `pos` pointer and sets the `current_char` variable"""
 
         self.pos += 1
         if self.pos >= len(self.text):
-            self.current_char = None  # Вказує на кінець введення
+            self.current_char = None  # Indicates the end of the input
         else:
             self.current_char = self.text[self.pos]
 
     def skip_whitespace(self):
 
-        """Пропускаємо пробіли"""
+        """Skips whitespace"""
 
         while self.current_char is not None and self.current_char.isspace():
             self.advance()
 
     def get_token_type(self, token):
 
-        """Визначаємо тип токена на основі його значення за допомогою регулярних виразів"""
+        """Determines the token type based on its value using regular expressions"""
         
         token_patterns = {
             r'CREATE': 'CREATE',
@@ -90,7 +89,7 @@ class Lexer(object):
             r'^;$': 'EOI'
         }
 
-        # Перевіряємо, якому шаблону відповідає токен
+        # Check which pattern the token matches
         for pattern, token_type in token_patterns.items():
             if re.match(pattern, token, re.IGNORECASE if token_type in ['CREATE', 'INSERT', 'PRINT_INDEX', 'SEARCH', 'WHERE'] else 0):
                 return token_type
@@ -99,36 +98,36 @@ class Lexer(object):
 
     def tokenize_text(self, text):
 
-        """Розбиваємо текст на окремі слова, використовуючи регулярні вирази"""
+        """Splits the text into individual words using regular expressions"""
         
         words = re.findall(r'[a-zA-Z0-9_]+', text)
         return words
 
     def get_next_token(self):
 
-        """Отримуємо наступний токен з введення, обробляючи рядки в лапках та інші типи токенів"""
+        """Gets the next token from the input, processing quoted strings and other types of tokens"""
         
         while self.current_char is not None:
 
-            # Пропускаємо пробіли
+            # Skip whitespace
             if self.current_char.isspace():
                 self.skip_whitespace()
                 continue
 
-            # Кінець команди
+            # End of command
             if self.current_char == ';':
                 self.advance()
                 return Token('EOI', ';')
 
-            # Обробка знаку мінус
+            # Processing the minus sign
             if self.current_char == '-':
                 self.advance()
                 return Token('MIN', '-')
 
-            # Ініціалізуємо результат для збору символів токена
+            # Initialize result for collecting token characters
             result = ''
 
-            # Обробка рядків в лапках (документів або слів)
+            # Processing quoted strings (documents or words)
             if self.current_char == '"':
                 self.advance()
                 result, contains_space = self._get_quoted_string()
@@ -136,16 +135,16 @@ class Lexer(object):
                 result = self.tokenize_text(result)
                 return Token(token_type, result)
 
-            # Обробка кутових дужок для <N>
+            # Processing angle brackets for <N>
             if self.current_char == '<':
                 self.advance()
                 result = self._get_angle_bracket_content()
                 if result.isdigit():
-                    return Token('DIST', int(result))  # Повертаємо як ціле число
+                    return Token('DIST', int(result))  # Return as an integer
                 else:
-                    self.error()  # Помилка, якщо не число
+                    self.error()  # Error if not a number
 
-            # Збираємо звичайні слова/ідентифікатори
+            # Collecting regular words/identifiers
             while self.current_char is not None and not self.current_char.isspace() and self.current_char not in [';', '"']:
                 result += self.current_char
                 self.advance()
@@ -158,7 +157,7 @@ class Lexer(object):
 
     def _get_quoted_string(self):
 
-        """Допоміжний метод для обробки рядків в лапках та визначення, чи містять вони пробіли """
+        """Helper method for processing quoted strings and determining if they contain spaces """
         
         result = ''
         contains_space = False
@@ -168,27 +167,27 @@ class Lexer(object):
             result += self.current_char
             self.advance()
 
-        # Якщо досягли кінця тексту без закриваючої лапки, викликаємо помилку
+        # If reached the end of the text without a closing quote, raise an error
         if self.current_char is None:
-            self.error()  # Незакрита лапка
+            self.error()  # Unclosed quote
 
-        self.advance()  # Переміщуємося через закриваючу лапку
+        self.advance()  # Move past the closing quote
         return result, contains_space
 
     def _get_angle_bracket_content(self):
 
-        """Допоміжний метод для збору вмісту в кутових дужках"""
+        """Helper method for collecting content in angle brackets"""
         
         result = ''
         while self.current_char is not None and self.current_char != '>':
             result += self.current_char
             self.advance()
 
-        # Якщо досягли кінця тексту без закриваючої кутової дужки, викликаємо помилку
+        # If reached the end of the text without a closing angle bracket, raise an error
         if self.current_char is None:
-            self.error()  # Незакрита кутова дужка
+            self.error()  # Unclosed angle bracket
 
-        self.advance()  # Переміщуємося через закриваючу дужку
+        self.advance()  # Move past the closing bracket
         return result
 
 

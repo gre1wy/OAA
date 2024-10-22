@@ -15,21 +15,21 @@ def main():
 
     while True:
         try:
-            # Приймаємо команду від користувача
+            # Accepting command from the user
             text = input('Enter command: ')
             
-            # Вихід, якщо користувач ввів '-q'
+            # Exit if user types '-q'
             if text.lower() == '-q':
                 print("Exiting the system.")
                 break
             
-            # Створюємо екземляр лексера
+            # Creating a lexer instance
             lexer = Lexer(text)
             
-            # Створюємо екземляр парсера, передаючи лексер і бд
+            # Creating a parser instance, passing db
             parser = Parser(lexer, db)
             
-            # Викликаєм авто-парсер, який робить всю магію
+            # Calling auto_parse which does all the magic
             parser.auto_parse()
         
         except Exception as e:
