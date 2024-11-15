@@ -26,8 +26,8 @@ def main():
 
     while True:
         try:
-            text = input("Enter command: ").strip()
-            if text.lower() == '-q':
+            text = sys.stdin.read()
+            if text.strip().lower() == '-q':
                 print("Exiting the system.")
                 break
 
