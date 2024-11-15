@@ -6,15 +6,17 @@ import sys
 def execute_file_commands(filename, db):
     """Executes commands from a given file"""
     try:
+        filename = filename.strip()  # Removes extra spaces or newlines
         with open(filename, 'r') as file:
             for line in file:
                 if line.strip():  # Skip empty lines
                     print(f"Command: {line.strip()}")
-                    lexer = Lexer(line)
+                    lexer = Lexer(line.strip())
                     parser = Parser(lexer, db)
                     parser.auto_parse()
     except Exception as e:
         print(f"Error while executing commands from file: {e}")
+
 
 def main():
     print("Welcome to the text collection management system!")
