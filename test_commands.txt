@@ -1,0 +1,20 @@
+CREATE articles;
+INSERT articles "The quick brown fox jumps over the lazy dog";
+INSERT articles "A journey of a thousand miles begins with a single step";
+PRINT_INDEX articles;
+
+SEARCH articles;
+SEARCH articles WHERE "quick";
+SEARCH articles WHERE "quick" - "step";
+SEARCH articles WHERE "brown" <2> "fox";
+
+CREATE books;
+INSERT books "Python programming is fun";
+INSERT books "Data structures and algorithms are core concepts in computer science";
+PRINT_INDEX books;
+
+SEARCH books;
+SEARCH books WHERE "Python";
+SEARCH books WHERE "Data" - "science";
+SEARCH books WHERE "structures" <4> "concepts";
+
