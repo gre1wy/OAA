@@ -12,14 +12,14 @@ def main():
     print("Type '-q' to quit.")
     
     db = DB()
-
     while True:
         try:
             # Accepting command from the user
             # text = input('Enter command: ')
+            print('Enter command:')
             text = sys.stdin.read()
             # Exit if user types '-q'
-            if text.lower() == '-q':
+            if text.strip().lower() == '-q':
                 print("Exiting the system.")
                 break
             
