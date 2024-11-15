@@ -25,7 +25,7 @@ class Parser(object):
     def eat(self, token_type, token_type_second=None):
 
         """Checks if the current token type matches the expected type. If so, it moves 
-        to the next token. If two types are provided, it checks against either (?).
+        to the next token. If two types are provided, it checks one of them.
 
         Args:
             token_type (str): Expected token type
@@ -40,10 +40,12 @@ class Parser(object):
     def parse_create(self):
 
         """Parses the CREATE command"""
-
-        self.eat('CREATE')  
+        #('CREATE', 'create')
+        self.eat('CREATE')
+        #('COLLECTION', 'hello')  
         collection_name = self.current_token.value 
-        self.eat('COLLECTION')  
+        self.eat('COLLECTION') 
+        #('EOI', ';')
         self.eat('EOI') 
         print(f"Creating collection: {collection_name}")
         return collection_name
@@ -123,31 +125,36 @@ class Parser(object):
         # Process commands based on token type
         if command_type == 'CREATE':
             collection_name = self.parse_create()
-            # self.db.create_collection(collection_name) 
+            self.db.create_collection(collection_name) 
             return  collection_name
             
         elif command_type == 'INSERT':
             collection_name, document = self.parse_insert()
-            # self.db.insert_document(collection_name, document)
+            self.db.insert_document(collection_name, document)
             return  collection_name, document
             
         elif command_type == 'PRINT_INDEX':
             collection_name = self.parse_print_index()
-            self.db.print_index(collection_name)  
+            self.db.print_index(collection_name)
+            return collection_name  
 
         elif command_type == 'SEARCH':
             collection_name, word1, word2, dist = self.parse_search()
             if collection_name and word1 and word2 and dist:
-                self.db.search_distance(collection_name, word1, word2, dist) 
+                self.db.search_distance(collection_name, word1, word2, dist)
+                return collection_name, word1, word2, dist
 
             elif collection_name and word1 and word2 and not dist:
-                self.db.search_range(collection_name, word1, word2)  
+                self.db.search_range(collection_name, word1, word2)
+                return collection_name, word1, word2, dist
 
             elif collection_name and word1 and not word2 and not dist:
-                self.db.search_word(collection_name, word1)  
+                self.db.search_word(collection_name, word1)
+                return collection_name, word1, word2, dist
 
             elif collection_name and not word1 and not word2 and not dist:
-                self.db.search(collection_name)  
+                self.db.search(collection_name)
+                return collection_name, word1, word2, dist
         else:
             self.error() # Raises an error for unknown command
 

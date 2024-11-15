@@ -86,7 +86,8 @@ class Lexer(object):
             r'^".*"$': 'DOCUMENT',
             r'^-': 'MIN',
             r'^<\d+>$': 'DIST',
-            r'^;$': 'EOI'
+            r'^;$': 'EOI',
+            r'.+': 'JUNK'
         }
 
         # Check which pattern the token matches
@@ -193,8 +194,7 @@ class Lexer(object):
 
 
 if __name__ == '__main__':
-    lexer = Lexer('CREATE \t \r one_piece;')
-
+    lexer = Lexer('CREATE one_piece;')
     token = lexer.get_next_token()
     while token.type != 'EOF':
         print(token)
