@@ -19,7 +19,7 @@ def main():
             # text = input('Enter command: ')
             text = sys.stdin.read()
             # Exit if user types '-q'
-            if text.lower() == '-q':
+            if text.strip().lower() == '-q':
                 print("Exiting the system.")
                 break
             
