@@ -1,20 +1,28 @@
-CREATE articles;
-INSERT articles "The quick brown fox jumps over the lazy dog";
-INSERT articles "A journey of a thousand miles begins with a single step";
-PRINT_INDEX articles;
+CREATE docs;
+CREATE fruits;
 
-SEARCH articles;
-SEARCH articles WHERE "quick";
-SEARCH articles WHERE "quick" - "step";
-SEARCH articles WHERE "brown" <2> "fox";
+INSERT docs "a B c d";
+INSERT docs "b c e f";
+INSERT fruits "apple banana cherry";
+INSERT fruits "banana apple";
 
-CREATE books;
-INSERT books "Python programming is fun";
-INSERT books "Data structures and algorithms are core concepts in computer science";
-PRINT_INDEX books;
+PRINT_INDEX docs;
+PRINT_INDEX fruits;
 
-SEARCH books;
-SEARCH books WHERE "Python";
-SEARCH books WHERE "Data" - "science";
-SEARCH books WHERE "structures" <4> "concepts";
+SEARCH docs;
+SEARCH docs WHERE "b";
+SEARCH docs WHERE "B" - "E";
+SEARCH docs WHERE "b" <1> "c";
+
+SEARCH fruits;
+SEARCH fruits WHERE "apple";
+SEARCH fruits WHERE "apple" - "cherry";
+SEARCH fruits WHERE "banana" <2> "apple";
+
+INSERT non_existing "test";
+SEARCH non_existing;
+CREATE docs;
+PRINT_INDEX non_existing; 
+SEARCH docs WHERE;
+
 

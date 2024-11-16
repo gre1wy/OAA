@@ -16,6 +16,7 @@ class InvertedIndex:
 
         # Iterate over tokens and add them to the index
         for pos, token in enumerate(tokens):
+            token = token.lower()
             if token not in self.index:
                 self.index[token] = {}  # Initialize entry for the new token
 
@@ -50,13 +51,14 @@ class InvertedIndex:
     def search_word(self, word):
     
         """Search for documents by a specific word"""
-
+        word = word.lower()
         return list(self.index.get(word, {}).keys())
 
     def search_range(self, keyword1, keyword2):
         
         """Search for documents that contain words in the specified range"""
-
+        keyword1 = keyword1.lower()
+        keyword2 = keyword2.lower()
         result_docs = set()
 
         # Iterate over all words in the index
@@ -68,7 +70,8 @@ class InvertedIndex:
     def search_distance(self, keyword1, keyword2, exact_distance):
 
         """Search for documents where keyword1 and keyword2 are exactly exact_distance apart"""
-
+        keyword1 = keyword1.lower()
+        keyword2 = keyword2.lower()
         result_docs = []
 
         # Check if both words exist in the index
