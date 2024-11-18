@@ -1,22 +1,28 @@
 class InvertedIndex:
 
-    """Class for implementing an inverted index"""
+    """Class for implementing an inverted index
+    This structure maps words to document IDs and their positions within those documents.
+    """
 
     def __init__(self):
 
         # Dictionary: {word: {document_id: [positions]}}
         self.index = {}
-        self.next_doc_id = 1  # Initialize the document ID counter
+        # Counter to assign unique IDs to each document
+        self.next_doc_id = 1  
 
     def insert(self, tokens):
 
+        if not tokens or not isinstance(tokens, list):
+            raise ValueError("Invalid input: 'tokens' must be a non-empty list of words.")
+        
         # Generate the document ID
         doc_id = self.next_doc_id
         self.next_doc_id += 1  
 
         # Iterate over tokens and add them to the index
         for pos, token in enumerate(tokens):
-            token = token.lower()
+            token = token.lower()  # Case insensitive
             if token not in self.index:
                 self.index[token] = {}  # Initialize entry for the new token
 
@@ -57,8 +63,8 @@ class InvertedIndex:
     def search_range(self, keyword1, keyword2):
         
         """Search for documents that contain words in the specified range"""
-        keyword1 = keyword1.lower()
-        keyword2 = keyword2.lower()
+
+        keyword1, keyword2 = keyword1.lower(), keyword2.lower()
         result_docs = set()
 
         # Iterate over all words in the index
@@ -69,9 +75,9 @@ class InvertedIndex:
 
     def search_distance(self, keyword1, keyword2, exact_distance):
 
-        """Search for documents where keyword1 and keyword2 are exactly exact_distance apart"""
-        keyword1 = keyword1.lower()
-        keyword2 = keyword2.lower()
+        """Searches for documents where two words are separated by a specific distance"""
+        
+        keyword1, keyword2 = keyword1.lower(), keyword2.lower()
         result_docs = []
 
         # Check if both words exist in the index
@@ -93,7 +99,7 @@ class InvertedIndex:
 
 class DB:
 
-    """Class for managing collections of documents"""
+    """Class for managing collections of documents using the inverted index"""
 
     def __init__(self):
 
