@@ -2,7 +2,8 @@ import re # For processing regular expressions
 
 class Token(object):
 
-    """Class for representing tokens"""
+    """Class for representing tokens.
+    Each token has a type (e.g., CREATE, WORD) and a value."""
 
     def __init__(self, type, value):
 
@@ -33,10 +34,9 @@ class Token(object):
     
 class Lexer(object):
 
-    """Class for tokenizing text
-
-    Used to split the input text into tokens,
-    which can then be processed by the parser
+    """
+    Class for tokenizing text.
+    Splits input text into tokens to be processed by the parser.
     """
 
     def __init__(self, text):
@@ -106,7 +106,8 @@ class Lexer(object):
 
     def get_next_token(self):
 
-        """Gets the next token from the input, processing quoted strings and other types of tokens"""
+        """Retrieves the next token from the input.
+        Handles quoted strings, angle brackets, and regular words."""
         
         while self.current_char is not None:
 
@@ -125,8 +126,7 @@ class Lexer(object):
                 self.advance()
                 return Token('MIN', '-')
 
-            # Initialize result for collecting token characters
-            result = ''
+            result = ''  # To store the token value
 
             # Processing quoted strings (documents or words)
             if self.current_char == '"':

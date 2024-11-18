@@ -3,7 +3,9 @@ from invertedIndex import DB
 
 class Parser(object):
 
-    """Parser for processing commands from the lexer and executing actions in the database"""
+    """Parser for processing commands from the lexer and executing actions in the database.
+    This class interprets tokenized input and performs the corresponding operations.
+    """
 
     def __init__(self, lexer, db):
         """Initializes the parser with the lexer and database
@@ -12,7 +14,7 @@ class Parser(object):
             lexer (Lexer): The lexer responsible for tokenizing the text
             db (DB): The database object for executing commands
         """
-        self.lexer = lexer # changed from Lexer to lexer !!! ??
+        self.lexer = lexer 
         self.db = db
         self.current_token = self.lexer.get_next_token()
 
@@ -24,8 +26,9 @@ class Parser(object):
 
     def eat(self, token_type, token_type_second=None):
 
-        """Checks if the current token type matches the expected type. If so, it moves 
-        to the next token. If two types are provided, it checks one of them.
+        """(Checks if the current token type matches the expected type. If so, it moves 
+        to the next token. If two types are provided, it checks one of them.)
+        Validates and consumes the current token, moving to the next.
 
         Args:
             token_type (str): Expected token type
