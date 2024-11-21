@@ -51,13 +51,3 @@ The time and space complexity of the implemented algorithms have been analyzed a
     - Searching for keywords within a distance: O(k1 * k2 + d), where k1 and k2 are the number of occurrences of the two keywords, and d is the number of documents containing both keywords within the specified distance.
 - **Printing the inverted index**: The time complexity is O(k * d), where k is the number of unique words in the index and d is the number of documents containing each word.
 
-## Future Improvements
-
-1. **Handling larger documents**: The current implementation assumes that documents can be entirely loaded into memory. For handling larger documents, the program could be modified to process the documents in smaller chunks or use external storage (e.g., files, databases) to store the inverted index.
-2. **Advanced search features**: The program could be extended to support more sophisticated search features, such as:
-    - Ranking and scoring of search results based on various factors (e.g., term frequency, inverse document frequency)
-    - Stemming and lemmatization to improve search accuracy
-    - Handling of synonyms and related terms
-3. **Improved user experience**: The program could be enhanced with a more user-friendly command-line interface, including features like autocompletion, command history, and better error reporting.
-4. **Persistence and concurrency**: The program could be extended to support persistent storage of the inverted index and collections, allowing for data to be retained between program runs. Additionally, mechanisms for handling concurrent access to the collections could be implemented.
-5. **Distributed and scalable architecture**: For larger-scale deployments, the program could be designed to run in a distributed environment, leveraging techniques like sharding, replication, and load balancing to improve scalability and fault tolerance.
