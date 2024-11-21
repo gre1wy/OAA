@@ -3,36 +3,28 @@ from invertedIndex import DB
 
 class Parser(object):
 
-    """Parser for processing commands from the lexer and executing actions in the database.
+    """
+    Parser for processing commands from the lexer and executing actions in the database.
     This class interprets tokenized input and performs the corresponding operations.
     """
 
     def __init__(self, lexer, db):
-        """Initializes the parser with the lexer and database
-
-        Args:
-            lexer (Lexer): The lexer responsible for tokenizing the text
-            db (DB): The database object for executing commands
-        """
+        
         self.lexer = lexer 
         self.db = db
         self.current_token = self.lexer.get_next_token()
 
     def error(self):
 
-        """Raises a syntax error"""
-
         raise Exception('Invalid syntax')
 
     def eat(self, token_type, token_type_second=None):
 
-        """(Checks if the current token type matches the expected type. If so, it moves 
-        to the next token. If two types are provided, it checks one of them.)
+        """
         Validates and consumes the current token, moving to the next.
 
-        Args:
-            token_type (str): Expected token type
-            token_type_second (str): Additional token type for checking (optional)
+        token_type: expected token type
+        token_type_second: additional token type for checking (optional)
         """
     
         if self.current_token.type == token_type or (token_type_second and self.current_token.type == token_type_second):
@@ -43,6 +35,7 @@ class Parser(object):
     def parse_create(self):
 
         """Parses the CREATE command"""
+        
         #('CREATE', 'create')
         self.eat('CREATE')
         #('COLLECTION', 'hello')  
@@ -90,7 +83,6 @@ class Parser(object):
             word1 = self.current_token.value  
             self.eat('WORD')  
 
-            # Check for the use of minus (-) for range search
             if self.current_token.type == 'MIN':  # WHERE “keyword_1” - “keyword_1”
                 self.eat('MIN')
                 word2 = self.current_token.value
@@ -99,8 +91,8 @@ class Parser(object):
                 print(f"Searching in collection {collection_name} for documents with word between '{word1}' and '{word2}'")
                 return collection_name, word1[0], word2[0], None
             
-            # Check for distance between words
-            if self.current_token.type == 'DIST': # “keyword_1” <N> “keyword_2” 
+            
+            if self.current_token.type == 'DIST': # WHERE “keyword_1” <N> “keyword_2” 
                 dist = self.current_token.value
                 self.eat('DIST')
                 word2 = self.current_token.value
@@ -125,7 +117,6 @@ class Parser(object):
 
         command_type = self.current_token.type
 
-        # Process commands based on token type
         if command_type == 'CREATE':
             collection_name = self.parse_create()
             self.db.create_collection(collection_name) 
@@ -159,7 +150,7 @@ class Parser(object):
                 self.db.search(collection_name)
                 return collection_name, word1, word2, dist
         else:
-            self.error() # Raises an error for unknown command
+            self.error() 
 
 
 

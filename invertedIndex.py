@@ -1,6 +1,7 @@
 class InvertedIndex:
 
-    """Class for implementing an inverted index
+    """
+    Class for implementing an inverted index.
     This structure maps words to document IDs and their positions within those documents.
     """
 
@@ -20,7 +21,6 @@ class InvertedIndex:
         doc_id = self.next_doc_id
         self.next_doc_id += 1  
 
-        # Iterate over tokens and add them to the index
         for pos, token in enumerate(tokens):
             token = token.lower()  # Case insensitive
             if token not in self.index:
@@ -32,13 +32,7 @@ class InvertedIndex:
 
     def print_index(self):
 
-        """Prints the index to the screen
-
-        Example output:
-            'apple': {1: [0, 5], 2: [1]}
-            'banana': {1: [2]}
-            'orange': {2: [3, 4]}
-        """
+        """Prints the index to the screen"""
 
         for word, doc_positions in self.index.items():
             print(f"'{word}': {doc_positions}")
@@ -48,8 +42,6 @@ class InvertedIndex:
         """Returns all documents stored in the index"""
 
         all_docs = set()   
-
-        # Iterate over all words in the index
         for word_docs in self.index.values():
             all_docs.update(word_docs.keys())
         return list(all_docs)
@@ -57,6 +49,7 @@ class InvertedIndex:
     def search_word(self, word):
     
         """Search for documents by a specific word"""
+
         word = word.lower()
         return list(self.index.get(word, {}).keys())
 
@@ -67,7 +60,6 @@ class InvertedIndex:
         keyword1, keyword2 = keyword1.lower(), keyword2.lower()
         result_docs = set()
 
-        # Iterate over all words in the index
         for word in self.index:
             if keyword1 <= word <= keyword2:
                 result_docs.update(self.index[word].keys())
@@ -80,17 +72,14 @@ class InvertedIndex:
         keyword1, keyword2 = keyword1.lower(), keyword2.lower()
         result_docs = []
 
-        # Check if both words exist in the index
         if keyword1 not in self.index or keyword2 not in self.index:
             return result_docs
         
-        # Iterate over documents for the first word
         for doc_id in self.index[keyword1]:
             if doc_id in self.index[keyword2]:
                 pos_word1 = self.index[keyword1][doc_id]
                 pos_word2 = self.index[keyword2][doc_id]
 
-                # Check if there are positions where the distance between the words is exactly equal to exact_distance
                 if any(abs(p1 - p2) == exact_distance for p1 in pos_word1 for p2 in pos_word2):
                     result_docs.append(doc_id)
 

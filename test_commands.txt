@@ -1,24 +1,16 @@
 CREATE docs;
-CREATE fruits;
 
 INSERT docs "a B c d";
 INSERT docs "b c e f";
-INSERT fruits "apple banana cherry";
-INSERT fruits "banana apple";
 
 PRINT_INDEX docs;
-PRINT_INDEX fruits;
 
 SEARCH docs;
 SEARCH docs WHERE "b";
 SEARCH docs WHERE "B" - "E";
 SEARCH docs WHERE "b" <1> "c";
 
-SEARCH fruits;
-SEARCH fruits WHERE "apple";
-SEARCH fruits WHERE "apple" - "cherry";
-SEARCH fruits WHERE "banana" <2> "apple";
-
+CREATE docs
 INSERT non_existing "test";
 SEARCH non_existing;
 CREATE docs;

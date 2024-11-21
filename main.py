@@ -4,9 +4,11 @@ from invertedIndex import DB
 import sys
 
 def execute_file_commands(filename, db):
+
     """Executes commands from a given file"""
+
     try:
-        filename = filename.strip()  # Removes extra spaces or newlines
+        filename = filename.strip() 
         with open(filename, 'r') as file:
             for line in file:
                 if line.strip():  # Skip empty lines
@@ -15,7 +17,7 @@ def execute_file_commands(filename, db):
                     parser = Parser(lexer, db)
                     parser.auto_parse()
     except Exception as e:
-        print(f"Error while executing commands from file: {e}")
+        print(f"Error: {e}")
 
 
 def main():
@@ -29,6 +31,8 @@ def main():
     while True:
         try:
             text = sys.stdin.read()
+
+            # Exit on '-q'
             if text.strip().lower() == '-q':
                 print("Exiting the system.")
                 break
