@@ -33,37 +33,6 @@ The program is implemented using the following components:
 1. Clone the repository:
 
 ```
-Copy
-git clone https://github.com/your-username/inverted-index.git
-
-```
-
-1. Navigate to the project directory:
-
-```
-cd inverted-index
-
-```
-
-1. Run the program:
-
-```
-python main.py
-```
-
-1. Enter commands from the supported list:
-
-```
-Welcome to the text collection management system!
-You can use the following commands:
-  CREATE <collection_name>;
-  INSERT <collection_name> "<document>";
-  PRINT_INDEX <collection_name>;
-  SEARCH <collection_name> [WHERE <query>];
-Type '-q' to quit.
-```
-
-1. To exit the program, type `q`.
 
 ## Error Handling
 
