@@ -37,8 +37,6 @@ The program is designed to detect and handle various error situations, such as:
 - Incorrect syntax of commands
 - Attempting to create a collection with a name that is already in use
 - Attempting to execute a command on a non-existent collection
-- Providing an insufficient number of values for the `INSERT` command in variants with a relational data model
-- Attempting to retrieve non-existent columns in a table using the `SELECT` command in variants with a relational data model
 
 When an error occurs, the program will output an appropriate error message to the user.
 
