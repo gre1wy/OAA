@@ -29,11 +29,7 @@ The program is implemented using the following components:
 5. **Main Entry Point (`main.py`)**: Provides the command-line interface and coordinates the interaction between the other components.
 
 ## Usage
-
-1. Clone the repository:
-
-```
-
+...
 ## Error Handling
 
 The program is designed to detect and handle various error situations, such as:
