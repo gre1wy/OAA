@@ -27,7 +27,6 @@ def main():
     print("To execute commands from a file, use: `file <filename>`")
 
     db = DB()
-
     while True:
         try:
             text = sys.stdin.read()

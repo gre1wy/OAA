@@ -20,8 +20,9 @@ class Parser(object):
 
     def eat(self, token_type, token_type_second=None):
 
-        """
-        Validates and consumes the current token, moving to the next.
+        """Checks if the current token type matches the expected type. If so, it moves 
+        to the next token. If two types are provided, it checks one of them.
+
 
         token_type: expected token type
         token_type_second: additional token type for checking (optional)
@@ -35,7 +36,7 @@ class Parser(object):
     def parse_create(self):
 
         """Parses the CREATE command"""
-        
+
         #('CREATE', 'create')
         self.eat('CREATE')
         #('COLLECTION', 'hello')  
