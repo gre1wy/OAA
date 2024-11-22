@@ -2,16 +2,12 @@ import re # For processing regular expressions
 
 class Token(object):
 
-    """Class for representing tokens"""
+    """
+    Class for representing tokens.
+    Each token has a type (e.g., CREATE, WORD) and a value.
+    """
 
     def __init__(self, type, value):
-
-        """Initialization of the token
-
-        Args:
-            type (str): Type of the token
-            value (str): Value of the token
-        """
 
         self.type = type
         self.value = value
@@ -33,19 +29,12 @@ class Token(object):
     
 class Lexer(object):
 
-    """Class for tokenizing text
-
-    Used to split the input text into tokens,
-    which can then be processed by the parser
+    """
+    Class for tokenizing text.
+    Splits input text into tokens to be processed by the parser.
     """
 
     def __init__(self, text):
-
-        """Initialization of the lexer
-
-        Args:
-            text (str): Text for tokenization
-        """
 
         self.text = text
         self.pos = 0
@@ -106,29 +95,26 @@ class Lexer(object):
 
     def get_next_token(self):
 
-        """Gets the next token from the input, processing quoted strings and other types of tokens"""
+        """Retrieves the next token from the input.
+        Handles quoted strings, angle brackets, and regular words."""
         
         while self.current_char is not None:
 
-            # Skip whitespace
+
             if self.current_char.isspace():
                 self.skip_whitespace()
                 continue
 
-            # End of command
             if self.current_char == ';':
                 self.advance()
                 return Token('EOI', ';')
 
-            # Processing the minus sign
             if self.current_char == '-':
                 self.advance()
                 return Token('MIN', '-')
 
-            # Initialize result for collecting token characters
-            result = ''
+            result = ''  # To store the token value
 
-            # Processing quoted strings (documents or words)
             if self.current_char == '"':
                 self.advance()
                 result, contains_space = self._get_quoted_string()
@@ -136,12 +122,11 @@ class Lexer(object):
                 result = self.tokenize_text(result)
                 return Token(token_type, result)
 
-            # Processing angle brackets for <N>
             if self.current_char == '<':
                 self.advance()
                 result = self._get_angle_bracket_content()
                 if result.isdigit():
-                    return Token('DIST', int(result))  # Return as an integer
+                    return Token('DIST', int(result))  
                 else:
                     self.error()  # Error if not a number
 
@@ -168,11 +153,10 @@ class Lexer(object):
             result += self.current_char
             self.advance()
 
-        # If reached the end of the text without a closing quote, raise an error
         if self.current_char is None:
             self.error()  # Unclosed quote
 
-        self.advance()  # Move past the closing quote
+        self.advance() 
         return result, contains_space
 
     def _get_angle_bracket_content(self):
@@ -184,13 +168,11 @@ class Lexer(object):
             result += self.current_char
             self.advance()
 
-        # If reached the end of the text without a closing angle bracket, raise an error
         if self.current_char is None:
             self.error()  # Unclosed angle bracket
 
-        self.advance()  # Move past the closing bracket
+        self.advance()  
         return result
-
 
 
 if __name__ == '__main__':

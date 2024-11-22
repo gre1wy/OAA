@@ -1,0 +1,20 @@
+CREATE docs;
+
+INSERT docs "a B c d";
+INSERT docs "b c e f";
+
+PRINT_INDEX docs;
+
+SEARCH docs;
+SEARCH docs WHERE "b";
+SEARCH docs WHERE "B" - "E";
+SEARCH docs WHERE "b" <1> "c";
+
+CREATE docs
+INSERT non_existing "test";
+SEARCH non_existing;
+CREATE docs;
+PRINT_INDEX non_existing; 
+SEARCH docs WHERE;
+
+
