@@ -40,14 +40,4 @@ The program is designed to detect and handle various error situations, such as:
 
 When an error occurs, the program will output an appropriate error message to the user.
 
-## Time and Space Complexity Analysis
-
-The time and space complexity of the implemented algorithms have been analyzed and the following insights can be provided:
-
-- **Insertion of documents into the inverted index**: The time complexity is O(n * m), where n is the number of unique words in the document and m is the number of positions (occurrences) of each word. The space complexity is O(n * m), as the inverted index stores the mapping of words to their positions in each document.
-- **Searching for documents**: The time complexity depends on the type of search query:
-    - Searching for a single keyword: O(k + d), where k is the number of occurrences of the keyword and d is the number of documents containing the keyword.
-    - Searching for a range of keywords: O(k + d), where k is the number of unique keywords in the range and d is the number of documents containing at least one of the keywords in the range.
-    - Searching for keywords within a distance: O(k1 * k2 + d), where k1 and k2 are the number of occurrences of the two keywords, and d is the number of documents containing both keywords within the specified distance.
-- **Printing the inverted index**: The time complexity is O(k * d), where k is the number of unique words in the index and d is the number of documents containing each word.
 
