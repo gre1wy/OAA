@@ -1,0 +1,14 @@
+CREATE lotr;
+
+INSERT lotr "The cat jumps quickly onto the soft and cozy couch";
+INSERT lotr "The soft couch becomes the cat favorite resting place daily";
+INSERT lotr "Each morning, the cozy couch greets sunlight through the window";
+INSERT lotr "The playful cat stretches lazily on the warm couch by noon";
+INSERT lotr "Evening comes, and the couch cradles the sleepy, purring cat";
+PRINT_INDEX lotr;
+
+SEARCH lotr;
+SEARCH lotr WHERE "cozy";
+SEARCH lotr WHERE "u" - "x"; 
+SEARCH lotr WHERE "couch" <5> "cat";
+

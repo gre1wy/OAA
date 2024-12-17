@@ -85,68 +85,123 @@ class InvertedIndex:
 
         return result_docs
 
-
-class DB:
-
-    """Class for managing collections of documents using the inverted index"""
+class FullDocuments:
+    """Class for storing and retrieving full documents"""
 
     def __init__(self):
+        # Dictionary: {document_id: document(str)}
+        self.full_text = {}
 
-        # Dictionary for storing collections: {collection_name: InvertedIndex}
+    def add_document(self, doc_id, document):
+        """Adds a document to the storage"""
+        self.full_text[doc_id] = ' '.join(document)
+
+    def get_document(self, doc_id):
+        """Retrieves a document by its ID"""
+        return self.full_text.get(doc_id)
+
+    def get_all_documents(self):
+        """Retrieves all documents in the storage"""
+        return self.full_text
+
+    def search_word(self, word):
+        """Search for full documents containing a specific word"""
+        word = word.lower()
+        result = []
+        for doc_id, document in self.full_text.items():
+            if word in document.lower().split():
+                result.append(document)
+        return result
+
+    def search_range(self, keyword1, keyword2):
+        """Search for full documents containing words in a specific range"""
+        keyword1, keyword2 = keyword1.lower(), keyword2.lower()
+        result = []
+        for doc_id, document in self.full_text.items():
+            words = set(document.lower().split())
+            if any(keyword1 <= word <= keyword2 for word in words):
+                result.append(document)
+        return result
+
+    def search_distance(self, keyword1, keyword2, exact_distance):
+        """Search for full documents where two words are separated by a specific distance"""
+        keyword1, keyword2 = keyword1.lower(), keyword2.lower()
+        result = []
+        for doc_id, document in self.full_text.items():
+            words = document.lower().split()
+            positions1 = [i for i, word in enumerate(words) if word == keyword1]
+            positions2 = [i for i, word in enumerate(words) if word == keyword2]
+            if any(abs(p1 - p2) == exact_distance for p1 in positions1 for p2 in positions2):
+                result.append(document)
+        return result
+
+
+
+class DB:
+    """Class for managing collections of documents"""
+
+    def __init__(self):
+        # Dictionary for storing collections: {collection_name: (InvertedIndex, FullDocuments)}
         self.collections = {}
 
     def create_collection(self, name):
-
         if name in self.collections:
             print(f"Collection '{name}' already exists.")
         else:
-            self.collections[name] = InvertedIndex()
+            self.collections[name] = (InvertedIndex(), FullDocuments())
             print(f"Collection '{name}' created.")
 
-    def insert_document(self, collection_name,text):
-
+    def insert_document(self, collection_name, document):
         if collection_name in self.collections:
-            self.collections[collection_name].insert(text)
-            print(f"Document added to collection '{collection_name}'.")
+            inverted_index, full_documents = self.collections[collection_name]
+
+            doc_id = inverted_index.next_doc_id
+            full_documents.add_document(doc_id, document)
+
+            inverted_index.insert(document)
+            print(f"Document added to collection '{collection_name}' with ID {doc_id}.")
         else:
             print(f"Collection '{collection_name}' not found.")
 
-    def print_index(self, collection_name): 
-
+    def print_index(self, collection_name):
         if collection_name in self.collections:
-            self.collections[collection_name].print_index()
+            inverted_index, _ = self.collections[collection_name]
+            inverted_index.print_index()
         else:
             print(f"Collection '{collection_name}' not found.")
-    
+
     def search(self, collection_name):
-
         if collection_name in self.collections:
-            result = self.collections[collection_name].search()
-            print(f"All documents in collection '{collection_name}': {result}")
+            inverted_index, full_documents = self.collections[collection_name]
+            doc_ids = inverted_index.search()
+            documents = [full_documents.get_document(doc_id) for doc_id in doc_ids]
+            print(f"All documents in collection '{collection_name}': {documents}")
         else:
             print(f"Collection '{collection_name}' not found.")
 
     def search_word(self, collection_name, word):
-
         if collection_name in self.collections:
-            result = self.collections[collection_name].search_word(word)
-            print(f"Search results: {result}")
+            inverted_index, full_documents = self.collections[collection_name]
+            doc_ids = inverted_index.search_word(word)
+            documents = [full_documents.get_document(doc_id) for doc_id in doc_ids]
+            print(f"Search results: {documents}")
         else:
             print(f"Collection '{collection_name}' not found.")
 
     def search_range(self, collection_name, word1, word2):
-
         if collection_name in self.collections:
-            result = self.collections[collection_name].search_range(word1, word2)
-            print(f"Search results: {result}")
+            inverted_index, full_documents = self.collections[collection_name]
+            doc_ids = inverted_index.search_range(word1, word2)
+            documents = [full_documents.get_document(doc_id) for doc_id in doc_ids]
+            print(f"Search results: {documents}")
         else:
             print(f"Collection '{collection_name}' not found.")
 
     def search_distance(self, collection_name, word1, word2, exact_dist):
-
         if collection_name in self.collections:
-            result = self.collections[collection_name].search_distance(word1, word2, exact_dist)
-            print(f"Search results: {result}")
+            inverted_index, full_documents = self.collections[collection_name]
+            doc_ids = inverted_index.search_distance(word1, word2, exact_dist)
+            documents = [full_documents.get_document(doc_id) for doc_id in doc_ids]
+            print(f"Search results: {documents}")
         else:
             print(f"Collection '{collection_name}' not found.")
-

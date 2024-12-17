@@ -24,7 +24,7 @@ def main():
     print("Welcome to the text collection management system!")
     print("You can execute commands interactively or from a file.")
     print("Type '-q' to quit.")
-    print("To execute commands from a file, use: `file <filename>`")
+    print("To execute commands from a file (u need to be in the same directory), use: `file <filename>`")
 
     db = DB()
     while True:

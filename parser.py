@@ -89,7 +89,7 @@ class Parser(object):
                 word2 = self.current_token.value
                 self.eat('WORD')
                 self.eat('EOI')  
-                print(f"Searching in collection {collection_name} for documents with word between '{word1}' and '{word2}'")
+                print(f"Searching in collection {collection_name} for documents with word between '{word1[0]}' and '{word2[0]}'")
                 return collection_name, word1[0], word2[0], None
             
             
@@ -99,12 +99,12 @@ class Parser(object):
                 word2 = self.current_token.value
                 self.eat('WORD')
                 self.eat('EOI')  
-                print(f"Searching in collection {collection_name} for documents with word on distance {dist} between '{word1}' and '{word2}'")
+                print(f"Searching in collection {collection_name} for documents with word on distance {dist} between '{word1[0]}' and '{word2[0]}'")
                 return collection_name, word1[0], word2[0], dist
             
             self.eat('EOI') 
 
-            print(f"Searching in collection {collection_name} for documents with word '{word1}'")
+            print(f"Searching in collection {collection_name} for documents with word '{word1[0]}'")
             return collection_name, word1[0], None, None
         
         self.eat('EOI')  
